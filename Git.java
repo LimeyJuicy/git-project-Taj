@@ -6,34 +6,42 @@ public class Git {
 
     public static void main(String[] args) {
 
-    Git git = new Git();
+        
 
-    try {
-        // Test 1: Initialize repository
-        git.initializeGit();
+        Git git = new Git();
 
-        // Test 2: Verify required files/directories exist
-        Path repository = Path.of("git");
-        Path objects = repository.resolve("objects");
-        Path index = repository.resolve("index");
-        Path head = repository.resolve("HEAD");
+        try {
+            // Test 1: Initialize repository
+            git.initializeGit();
 
-        if (Files.isDirectory(repository)
-                && Files.isDirectory(objects)
-                && Files.isRegularFile(index)
-                && Files.isRegularFile(head)) {
+            // Test 2: Verify required files/directories exist
+            Path repository = Path.of("git");
+            Path objects = repository.resolve("objects");
+            Path index = repository.resolve("index");
+            Path head = repository.resolve("HEAD");
 
-            System.out.println("Test Passed: Git repository initialized");
+            if (Files.isDirectory(repository)
+                    && Files.isDirectory(objects)
+                    && Files.isRegularFile(index)
+                    && Files.isRegularFile(head)) {
 
-        } else {
-            System.out.println("Test failed: repository is missing files/directories");
+                System.out.println("Test Passed: Git repository initialized");
+
+            } else {
+                System.out.println("Test failed: repository is missing files/directories");
+            }
+
+        } catch (IOException e) {
+            System.out.println("Test Failed: " + e.getMessage());
         }
 
-    } catch (IOException e) {
-        System.out.println("Test Failed: " + e.getMessage());
+        try {
+            String hash = FileHasher.hashFile("JavaFileSystem/backup/backup.txt");
+            System.out.println("SHA-1: " + hash);
+        } catch (IOException e) {
+            System.out.println("Hash error: " + e.getMessage());
+        }
     }
-}
-
 
     public void initializeGit() throws IOException { // this is the "init" function
         Path git = Path.of("git");
