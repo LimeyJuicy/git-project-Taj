@@ -72,7 +72,7 @@ public class FileHasher {
     }
 
     /**
-     * Reads the file at filePath and returns its SHA-256 hash
+     * Reads the file at filePath and returns its SHA-1 hash
      * as a lowercase 64-character hexadecimal string.
      */
     public static String hashFile(String filePath) throws IOException {

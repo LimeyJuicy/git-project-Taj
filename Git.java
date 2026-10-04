@@ -6,8 +6,6 @@ public class Git {
 
     public static void main(String[] args) {
 
-        
-
         Git git = new Git();
 
         try {
@@ -72,4 +70,20 @@ public class Git {
         }
 
     }
+
+    public String createBlob(String filePath) throws IOException {
+        initializeGit(); // always have to do this
+
+        Path source = Path.of(filePath);
+
+        if (!Files.isRegularFile(source)) {
+            throw new IOException("No such file: " + filePath);
+        }
+        String hash = FileHasher.hashFile(filePath);
+        Path blob = Path.of("git", "objects", hash);
+        byte[] content = Files.readAllBytes(source);
+        Files.write(blob, content);
+        return hash;
+    }
+
 }
