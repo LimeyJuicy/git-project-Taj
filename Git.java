@@ -86,4 +86,22 @@ public class Git {
         return hash;
     }
 
+    public void addBlob(String filePath) throws IOException {
+        String hash = createBlob(filePath);
+
+        Path source = Path.of(filePath);
+        String relativePath = source.toString().replace("\\", "/");
+
+        Path index = Path.of("git", "index");
+        String existing = Files.readString(index);
+
+        String entry = hash + " " + relativePath;
+
+        if (!existing.isEmpty()) {
+            existing += "\n";
+        }
+
+        Files.writeString(index, existing + entry);
+    }
+
 }
