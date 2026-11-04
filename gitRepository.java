@@ -51,7 +51,8 @@ public class gitRepository {
     }
 
     public String createBlob(String filePath) throws IOException {
-        initializeGit(); // always have to do this
+        if (!Files.exists(Path.of("git")))
+            initializeGit(); // always have to do this; son you do not always have to do this 😭 - Mattin
 
         Path source = Path.of(filePath);
 
@@ -263,10 +264,11 @@ public class gitRepository {
 
         StringBuilder content = new StringBuilder();
         content.append("tree: " + treeHash + "\n");
-        if (!parent.isEmpty()) 
+        if (!parent.isEmpty())
             content.append("parent: " + parent + "\n");
-        
-        content.append("author: " + author + "\n" + "date: " + LocalDateTime.now().toString() + "\n" + "message: " + message + "\n");
+
+        content.append("author: " + author + "\n" + "date: " + LocalDateTime.now().toString() + "\n" + "message: "
+                + message + "\n");
 
         byte[] bytes = content.toString().getBytes();
         String commitHash = hashBytes(bytes);
