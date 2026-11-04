@@ -12,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HexFormat;
 import java.util.List;
+import java.time.LocalDateTime;
 
 public class gitRepository {
 
@@ -20,6 +21,10 @@ public class gitRepository {
         Path objects = git.resolve("objects");
         Path index = git.resolve("index");
         Path head = git.resolve("HEAD");
+
+        boolean existed = Files.exists(git) && Files.exists(objects)
+                && Files.exists(index) && Files.exists(head); // the check used to happen after creating it, so it would
+                                                              // be always repository existed.
 
         if (!Files.exists(git)) {
             Files.createDirectory(git);
@@ -37,7 +42,7 @@ public class gitRepository {
             Files.createFile(head);
         }
 
-        if (Files.exists(git) && Files.exists(objects) && Files.exists(index) && Files.exists(head)) {
+        if (existed) {
             System.out.println("Git Repository Already Exists");
         } else {
             System.out.println("Git Repository Created");
@@ -250,4 +255,34 @@ public class gitRepository {
         }
     }
 
+    public String commit(String author, String message) throws IOException {
+        String treeHash = createTreefromIndex();
+
+        Path head = Path.of("git", "HEAD");
+        String parent = Files.readString(head);
+
+        StringBuilder content = new StringBuilder();
+        content.append("tree: " + treeHash + "\n");
+        if (!parent.isEmpty()) 
+            content.append("parent: " + parent + "\n");
+        
+        content.append("author: " + author + "\n" + "date: " + LocalDateTime.now().toString() + "\n" + "message: " + message + "\n");
+
+        byte[] bytes = content.toString().getBytes();
+        String commitHash = hashBytes(bytes);
+
+        Files.write(Path.of("git", "objects", commitHash), bytes);
+        Files.writeString(head, commitHash);
+
+        return commitHash;
+    }
+
+    private static String hashBytes(byte[] bytes) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-1");
+            return HexFormat.of().formatHex(digest.digest(bytes));
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-1 is not available", e);
+        }
+    }
 }
