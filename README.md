@@ -9,3 +9,7 @@ Git.java:
         -If all four already exist, prints: "Git Repository Already Exists"
         -Otherwise print: "Git Repository Created"
 
+
+
+November 12th- Everything is working!!
+
